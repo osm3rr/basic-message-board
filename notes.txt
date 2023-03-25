@@ -1,0 +1,152 @@
+# Message Board App
+0- review of what has been done so far
+
+1- folder to project
+    mkdir message-board
+
+2- create a virtual environment .venv
+    python -m venv .venv
+
+3- activate the .venv
+    .venv\Scripts\Activate.ps1
+
+4- install django in the .venv
+    python -m pip install django
+
+5- create a new django project
+    django-admin startproject django_project .
+
+6- create the necesary apps 
+    python manage.py startapp posts
+
+7- execute a migration set up 
+    python manage.py migrate
+
+8- update django_project/settings.py
+    INSTALLED_APPS = [
+        "posts.apps.PostsConfig", # new
+        ]
+
+9- run the local server
+    python manage.py runserver
+
+10- we’ll create our database model fo posts
+    # posts/models.py
+    # https://docs.djangoproject.com/en/4.1/topics/db/models/
+    from django.db import models
+
+    class Post(models.Model): # new
+        text = models.TextField()
+
+11- activating models
+    .1 create a migrations file with the makemigrations command
+        python manage.py makemigrations posts
+
+    .2 we build the actual database
+        python manage.py migrate
+
+12- django admin
+
+13- create a superuser
+    python manage.py createsuperuser
+
+14- run the server
+    python manage.py runserver
+
+15- go to http://127.0.0.1:8000/admin/
+    log in with superuser created
+
+16- add new apps to the INSTALLED_APPS config
+    # posts/admin.py
+    from django.contrib import admin
+    
+    from .models import Post
+    
+    admin.site.register(Post)
+
+17- create our first message board post for our database and save
+    Click on the + Add button opposite
+    Posts and enter your own content
+
+18- add a new function __str__ as follows, 
+# posts/models.py
+    from django.db import models
+    
+    class Post(models.Model):
+        text = models.TextField()
+    
+    def __str__(self): # new
+        return self.text[:50]
+
+19- Views/Templates/URLs
+
+20- views
+    # posts/views.py
+    from django.views.generic import ListView
+    from .models import Post
+
+    class HomePageView(ListView):
+        model = Post
+        template_name = "home.html"
+12- creating our new templates directory
+    mkdir templates
+
+13- update django_project/settings.py 
+# django_project/settings.py
+TEMPLATES = [
+    {
+    ...
+    "DIRS": [BASE_DIR / "templates"],
+    ...
+    },
+]
+
+14- create a new file called templates/home.html
+    <!-- templates/home.html -->
+    <h1>Message board homepage</h1>
+    <ul>
+        {% for post in post_list %}
+            <li>{{ post.text }}</li>
+        {% endfor %}
+    </ul>
+
+15- set up our URLs
+    # django_project/urls.py
+    from django.contrib import admin 
+    from django.urls import path, include # new
+    
+    urlpatterns = [
+        path("admin/", admin.site.urls),
+        path("", include("posts.urls")), # new
+        ]
+
+16- create a new urls.py file within the posts app
+    # posts/urls.py
+    from django.urls import path
+    from .views import HomePageView
+    urlpatterns = [
+    path("", HomePageView.as_view(), name="home"),
+    ]
+
+17- Restart the server
+    python manage.py runserver
+
+18- add .gitignore file
+    touch .gitignore
+    
+19- add the virtual environment to gitignore
+    .venv/
+
+20- create the git and githubs repo
+    - create a git local repository
+    - git init 
+    - 
+    - git add .
+    - git commit -m "first commit"
+    - git branch -M main
+    - git remote add origin url 
+    - git push -u origin main
+    - git branch dev 
+    - git checkout dev 
+    - git merge branch
+
